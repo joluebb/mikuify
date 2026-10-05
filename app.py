@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
+import re
 import shutil
 import tempfile
 import time
-import uuid
 from datetime import datetime
 from pathlib import Path
 
@@ -45,6 +45,25 @@ def _validate_runtime(model_name: str | None) -> None:
     validate_model(resolve_model(model_name))
 
 
+def _build_output_name(source: Path, model_name: str | None) -> str:
+    """Output name that keeps the input song's title recognizable.
+
+    Example: 'Payphone (Lyrics) [miku_default]_20261005_202047.mp3'.
+    Windows-invalid characters are removed; the stem is capped so long
+    titles cannot break the path.
+    """
+    stem = re.sub(r'[<>:"/\\|?*\x00-\x1f]', "", source.stem)
+    stem = re.sub(r"\s+", " ", stem).strip(" .")
+    if len(stem) > 60:
+        stem = stem[:60].rstrip(" .")
+    if not stem:
+        stem = "song"
+
+    model = re.sub(r'[<>:"/\\|?*\x00-\x1f]', "", model_name or "miku").strip() or "miku"
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    return f"{stem} [{model}]_{timestamp}.mp3"
+
+
 def process_audio(
     uploaded_audio: str | None,
     model_name: str | None,
@@ -74,10 +93,11 @@ def process_audio(
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     TEMP_ROOT.mkdir(parents=True, exist_ok=True)
-    output_name = (
-        f"mikuified_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:8]}.mp3"
-    )
-    final_output = OUTPUT_DIR / output_name
+    final_output = OUTPUT_DIR / _build_output_name(source, model_name)
+    counter = 2
+    while final_output.exists():
+        final_output = OUTPUT_DIR / f"{final_output.stem} ({counter}).mp3"
+        counter += 1
 
     try:
         with tempfile.TemporaryDirectory(prefix="mikuify-job-", dir=str(TEMP_ROOT)) as work_dir:

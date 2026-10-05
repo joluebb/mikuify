@@ -64,7 +64,7 @@ Eine `.index`-Datei ist optional; ohne sie entfällt die Index-Beimischung. Das 
 
 Die Oberfläche öffnet sich unter <http://127.0.0.1:7860>. Im Auswahlfeld kann zwischen allen gefundenen Stimmenmodellen aus `models/` gewechselt werden. Pitch-Shift ist in Halbtönen einstellbar; Vocal-, Instrumental- und Miku-Harmonienpegel sind lineare Multiplikatoren von 0 bis 2. Die Checkbox schaltet die Miku-Harmonien an/aus; die Feineinstellungen bieten Index-Beimischung und Konsonantenschutz gegen Artefakte. Die Verarbeitung läuft nacheinander, damit GPU-Speicher geschont wird.
 
-Fertige MP3s bleiben unter `outputs/` erhalten. Eingabe-Kopie, getrennte Spuren, umgewandelte Vocals und der temporäre Index-Cache werden nach dem Auftrag entfernt.
+Fertige MP3s bleiben unter `outputs/` erhalten. Die Dateinamen enthalten den Songtitel der Eingabe, das verwendete Stimmenmodell und einen Zeitstempel, z. B. `Payphone (Lyrics) [miku_default]_20261005_202047.mp3`. Eingabe-Kopie, getrennte Spuren, umgewandelte Vocals und der temporäre Index-Cache werden nach dem Auftrag entfernt.
 
 ## CLI-Tests
 
