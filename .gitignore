@@ -1,0 +1,15 @@
+.venv/
+.venv-tools/
+__pycache__/
+*.py[cod]
+work/
+outputs/
+uvr_models/
+*.log
+*.mp3
+*.wav
+*.flac
+
+# Model weights and indexes are user-provided and should remain local.
+models/*
+!models/README.md

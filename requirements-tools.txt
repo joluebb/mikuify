@@ -1,0 +1,15 @@
+# Dependencies for the lead/harmony split, installed into a SEPARATE venv
+# (.venv-tools). audio-separator requires numpy>=2/librosa>=0.10, which
+# conflicts with the RVC pins in requirements.txt; the split therefore runs
+# as its own process using this venv.
+#
+# Setup (in this order):
+#   py -3.10 -m venv .venv-tools
+#   .\.venv-tools\Scripts\python.exe -m pip install --upgrade pip
+#   .\.venv-tools\Scripts\python.exe -m pip install -r requirements-tools.txt
+#   .\.venv-tools\Scripts\python.exe -m pip install torch==2.5.1 torchvision==0.20.1 --index-url https://download.pytorch.org/whl/cu121 --force-reinstall --no-deps
+#
+# The last step restores a CUDA-enabled, NumPy-2-compatible torch pair;
+# audio-separator alone would pull an incompatible CPU-only torch.
+audio-separator==0.47.0
+onnxruntime==1.22.1
