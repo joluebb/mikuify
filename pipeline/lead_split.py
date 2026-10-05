@@ -24,10 +24,11 @@ from typing import Callable
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 TOOLS_PYTHON = PROJECT_ROOT / ".venv-tools" / "Scripts" / "python.exe"
 UVR_MODEL_DIR = PROJECT_ROOT / "uvr_models"
-# Mel-Band-Roformer would be stronger, but its librosa path needs numba/
-# llvmlite.dll, which a Windows application-control policy blocks on this
-# machine. The VR-arch karaoke model avoids numba and runs on the GPU.
-KARAOKE_MODEL = "6_HP-Karaoke-UVR.pth"
+# Best karaoke model: mel-band roformer (viperx, SDR ~10.2) — far cleaner
+# lead/harmony separation than the VR karaoke models. It needs numba; with the
+# tools_compat stub it may still work. VR fallback below is numba-light.
+KARAOKE_MODEL = "mel_band_roformer_karaoke_aufr33_viperx_sdr_10.1956.ckpt"
+VR_FALLBACK_MODEL = "6_HP-Karaoke-UVR.pth"
 
 
 class LeadSplitError(RuntimeError):
@@ -98,8 +99,8 @@ def split_lead_and_harmonies(
     ]
     if progress:
         progress(
-            "Trenne Lead-Stimme und Harmonien "
-            "(6HP-Karaoke-Modell, erster Lauf lädt es) …"
+            f"Trenne Lead-Stimme und Harmonien ({KARAOKE_MODEL.split('.')[0]}, "
+            "erster Lauf lädt das Modell) …"
         )
     try:
         completed = subprocess.run(
